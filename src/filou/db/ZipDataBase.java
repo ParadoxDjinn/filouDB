@@ -19,6 +19,10 @@ public final class ZipDataBase extends FileDataBase {
 
   private final File zipFile;
 
+  public ZipDataBase(String zipFile) throws IOException {
+    this(new File(zipFile));
+  }
+
   public ZipDataBase(File zipFile) throws IOException {
     if (!zipFile.exists()) {
       zipFile.createNewFile();

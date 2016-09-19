@@ -17,6 +17,10 @@ public class DirDataBase extends FileDataBase {
 
   private final File dirFile;
 
+  public DirDataBase(String dirFile) throws IOException {
+    this(new File(dirFile));
+  }
+
   public DirDataBase(File dirFile) throws IOException {
     if (!dirFile.exists()) {
       dirFile.mkdir();

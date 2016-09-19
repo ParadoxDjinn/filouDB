@@ -1,6 +1,7 @@
 package filou.util;
 
 import filou.entries.StructEntry;
+import filou.media.Register;
 
 /**
  *
@@ -8,5 +9,5 @@ import filou.entries.StructEntry;
  */
 public interface Loadable {
 
-  public void load(StructEntry struct);
+  public void load(Register register, StructEntry struct);
 }

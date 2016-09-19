@@ -20,8 +20,8 @@ import javafx.util.Pair;
  */
 public abstract class DataBase {
 
-  public final Register register = new Register();
-  public final Config config = new Config(register);
+  protected final Register register = new Register();
+  protected final Config config = new Config(register);
 
   public DataBase() {
     register.register(PropertiesType.TYPE);
@@ -30,16 +30,17 @@ public abstract class DataBase {
   }
 
   public final void add(Storable storable) {
-    REG.setEntry(register, UUID.randomUUID().toString(), (Entry) storable.save());
+    REG.setEntry(register, UUID.randomUUID().toString(),
+            (Entry) storable.save(register));
   }
 
   public final void set(String key, Storable storable) {
-    REG.setEntry(register, key, (Entry) storable.save());
+    REG.setEntry(register, key, (Entry) storable.save(register));
   }
 
   public final void get(String key, Loadable loadable) {
     if (REG.containsEntry(register, key)) {
-      loadable.load(REG.getEntry(register, key));
+      loadable.load(register, REG.getEntry(register, key));
     }
   }
 
@@ -88,16 +89,6 @@ public abstract class DataBase {
 
   public final void clear() {
     register.clear();
-  }
-
-  public static void set(Register register, String key, Storable storable) {
-    REG.setEntry(register, key, storable.save());
-  }
-
-  public static void get(Register register, String key, Loadable loadable) {
-    if (REG.containsEntry(register, key)) {
-      loadable.load(REG.getEntry(register, key));
-    }
   }
 
   public final void load(Source source) throws IOException {
