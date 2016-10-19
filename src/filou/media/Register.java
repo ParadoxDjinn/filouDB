@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javafx.util.Pair;
 
 /**
  *
@@ -85,12 +84,12 @@ public final class Register {
             || type.getFileSuffixes().stream().anyMatch(byFileSuffix::containsKey);
   }
 
-  public <T> void set(String key, Class<T> type, T value) {
-    byClass.get(type).set(key, value);
+  public <T> Entry<T> set(String key, Class<T> type, T value) {
+    return byClass.get(type).set(key, value);
   }
 
-  public <T> void set(String key, String fileSuffix, Class<T> type, T value) {
-    byClass.get(type).set(key, fileSuffix, value);
+  public <T> Entry<T> set(String key, String fileSuffix, Class<T> type, T value) {
+    return byClass.get(type).set(key, fileSuffix, value);
   }
 
   public <T> boolean contains(String key, Class<T> type) {
@@ -105,16 +104,28 @@ public final class Register {
     return (T) byClass.get(type).get(key);
   }
 
+  public <T> Entry<T> getEntry(String key, Class<T> type) {
+    return (Entry<T>) byClass.get(type).getEntry(key);
+  }
+
   public <T> T get(String key, Class<T> type, T defaultValue) {
     return (T) byClass.get(type).get(key, defaultValue);
   }
 
-  public <T> Stream<Pair<String, T>> stream(Class<T> type) {
+  public <T> Stream<Entry<T>> stream(Class<T> type) {
     return byClass.get(type).stream();
   }
 
-  public <T> void forEach(Class<T> type, Consumer<Pair<String, T>> consumer) {
+  public <T> void forEach(Class<T> type, Consumer<Entry<T>> consumer) {
     stream(type).forEach(consumer);
+  }
+
+  public Stream<Entry<?>> stream() {
+    return byClass.values().stream().flatMap(TypeEntry::stream);
+  }
+
+  public void forEach(Consumer<Entry<?>> consumer) {
+    stream().forEach(consumer);
   }
 
   public void load(Source source) throws IOException {
@@ -147,7 +158,7 @@ public final class Register {
         final Class<? extends Type> typeClass = holder.type.getClass();
         if (todo.contains(typeClass)
                 && holder.type.getRequiredTypes()
-                .stream().noneMatch(todo::contains)) {
+                        .stream().noneMatch(todo::contains)) {
           if (map.containsKey(holder.type)) {
             for (SourceEntry entry : map.get(holder.type)) {
               holder.in(this, entry);

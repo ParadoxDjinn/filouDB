@@ -94,7 +94,7 @@ public final class REG {
     return (T) register.byClass.get(filou.util.Entry.class).get(key, defaultValue);
   }
 
-  public static Stream<Pair<String, Entry>> entryStream(Register register) {
+  public static Stream<filou.media.Entry<Entry>> entryStream(Register register) {
     return register.stream(filou.util.Entry.class);
   }
 

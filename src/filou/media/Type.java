@@ -26,9 +26,11 @@ public abstract class Type<V> {
     return Collections.emptySet();
   }
 
-  public abstract V in(Register register, String key, String fileSuffix, InputStream stream) throws IOException;
+  public abstract V in(Register register, String key,
+          String fileSuffix, InputStream stream) throws IOException;
 
-  public abstract void out(Register register, String key, String fileSuffix, V value, OutputStream stream) throws IOException;
+  public abstract void out(Register register, String key,
+          String fileSuffix, V value, OutputStream stream) throws IOException;
 
   @Override
   public String toString() {
@@ -38,7 +40,7 @@ public abstract class Type<V> {
   @Override
   public int hashCode() {
     int hash = 5;
-    hash = 11 * hash + Objects.hashCode(this.getKey());
+    hash = 11 * hash + Objects.hashCode(this.getClass());
     return hash;
   }
 
@@ -46,10 +48,8 @@ public abstract class Type<V> {
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
-    } else if (obj == null || getClass() != obj.getClass()) {
-      return false;
+    } else {
+      return !(obj == null || getClass() != obj.getClass());
     }
-    final Type other = (Type) obj;
-    return Objects.equals(this.getKey(), other.getKey());
   }
 }

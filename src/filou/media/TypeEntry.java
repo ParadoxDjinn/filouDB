@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
-import javafx.util.Pair;
 
 /**
  *
@@ -15,7 +14,7 @@ import javafx.util.Pair;
 public class TypeEntry<V> {
 
   final Type<V> type;
-  private final HashMap<String, Pair<String, V>> data = new HashMap<>();
+  private final HashMap<String, Entry<V>> data = new HashMap<>();
 
   TypeEntry(Type<V> type) {
     this.type = type;
@@ -25,15 +24,30 @@ public class TypeEntry<V> {
     return type;
   }
 
-  void set(String key, V value) {
-    set(key, type.getDefaultFileSuffix(), value);
+  Entry<V> set(String key, V value) {
+    return set(key, type.getDefaultFileSuffix(), value);
   }
 
-  void set(String key, String fileSuffix, V value) {
+  Entry<V> set(String key, String fileSuffix, V value) {
     if (!type.getFileSuffixes().contains(fileSuffix)) {
-      throw new IllegalArgumentException("FileSuffix not supported:" + fileSuffix);
+      throw new IllegalArgumentException(
+              "FileSuffix not supported:" + fileSuffix);
     }
-    data.put(key, new Pair<>(fileSuffix, value));
+    if (data.containsKey(key)) {
+      final Entry<V> entry = data.get(key);
+      if (entry.getSuffix().equals(fileSuffix)) {
+        entry.setValue(value);
+        return entry;
+      } else {
+        throw new IllegalArgumentException(
+                "FileSuffix changed:" + fileSuffix
+                + " old:" + entry.getSuffix());
+      }
+    } else {
+      final Entry<V> entry = new Entry<>(key, fileSuffix, value, type);
+      data.put(key, entry);
+      return entry;
+    }
   }
 
   void remove(String key) {
@@ -48,6 +62,10 @@ public class TypeEntry<V> {
     return data.get(key).getValue();
   }
 
+  Entry<V> getEntry(String key) {
+    return data.get(key);
+  }
+
   V get(String key, V defaultValue) {
     if (data.containsKey(key)) {
       return data.get(key).getValue();
@@ -60,22 +78,18 @@ public class TypeEntry<V> {
     data.clear();
   }
 
-  Stream<Pair<String, V>> stream() {
-    return data.entrySet().stream()
-            .map(entry -> new Pair<>(entry.getKey(), entry.getValue().getValue()));
+  Stream<Entry<V>> stream() {
+    return data.entrySet().stream().map(entry -> entry.getValue());
   }
 
   void in(Register register, SourceEntry entry) throws IOException {
-    data.put(entry.key, new Pair<>(entry.fileSuffix, type.in(register,
-            entry.key, entry.fileSuffix, entry.buffer.asInputStream())));
+    data.put(entry.key, new Entry<>(entry, register, type));
   }
 
   void outAll(Register register, Set<SourceEntry> entrys) throws IOException {
-    for (Map.Entry<String, Pair<String, V>> dat : data.entrySet()) {
-      final Pair<String, V> p = dat.getValue();
-      final SourceEntry entry = new SourceEntry(dat.getKey(), p.getKey());
-      type.out(register, entry.key,
-              p.getKey(), p.getValue(), entry.buffer.asOutputStream());
+    for (Map.Entry<String, Entry<V>> dat : data.entrySet()) {
+      final Entry<V> p = dat.getValue();
+      final SourceEntry entry = p.toSourceEntry(register);
       entrys.add(entry);
     }
   }

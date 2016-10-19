@@ -12,7 +12,6 @@ import filou.util.Descriptor;
 import java.io.IOException;
 import java.util.UUID;
 import java.util.stream.Stream;
-import javafx.util.Pair;
 
 /**
  *
@@ -27,6 +26,7 @@ public abstract class DataBase {
     register.register(PropertiesType.TYPE);
     register.register(DescriptorType.TYPE);
     register.register(EntryType.TYPE);
+    register.register(TextType.TYPE);
   }
 
   public final void add(Storable storable) {
@@ -52,23 +52,23 @@ public abstract class DataBase {
 
   public abstract void save() throws IOException;
 
-  public final Stream<Pair<String, Entry>> stream(Descriptor descriptor) {
+  public final Stream<filou.media.Entry<Entry>> stream(Descriptor descriptor) {
     return REG.entryStream(register)
             .filter(pair -> pair.getValue().getDescriptor().equals(descriptor));
   }
 
-  public final Stream<Pair<String, ArrayEntry>> streamArray(Descriptor descriptor) {
+  public final Stream<filou.media.Entry<ArrayEntry>> streamArray(Descriptor descriptor) {
     descriptor.checkType(Type.Array);
-    return REG.entryStream(register)
+    return stream(descriptor)
             .filter(pair -> pair.getValue().getDescriptor().equals(descriptor))
-            .map(pair -> new Pair<>(pair.getKey(), (ArrayEntry) pair.getValue()));
+            .map((filou.media.Entry<Entry> entry) -> (filou.media.Entry) entry);
   }
 
-  public final Stream<Pair<String, StructEntry>> streamStruct(Descriptor descriptor) {
+  public final Stream<filou.media.Entry<StructEntry>> streamStruct(Descriptor descriptor) {
     descriptor.checkType(Type.Struct);
-    return REG.entryStream(register)
+    return stream(descriptor)
             .filter(pair -> pair.getValue().getDescriptor().equals(descriptor))
-            .map(pair -> new Pair<>(pair.getKey(), (StructEntry) pair.getValue()));
+            .map((filou.media.Entry<Entry> entry) -> (filou.media.Entry) entry);
   }
 
   public final void setObserver(Observer observer) {

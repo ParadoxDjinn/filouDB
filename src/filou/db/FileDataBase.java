@@ -1,7 +1,10 @@
 package filou.db;
 
 import java.io.File;
-import java.time.LocalDateTime;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Objects;
 
 /**
  *
@@ -9,12 +12,49 @@ import java.time.LocalDateTime;
  */
 public abstract class FileDataBase extends DataBase {
 
-  public abstract String getName();
+  protected final File file;
 
-  public abstract String getLocation();
+  public FileDataBase(File file) {
+    this.file = file;
+  }
 
-  public abstract LocalDateTime lastModified();
-  
-  public abstract File getFile();
+  public final String getName() {
+    return this.file.getName();
+  }
+
+  public final String getLocation() {
+    return this.file.getParent();
+  }
+
+  public final BasicFileAttributes getFileAttributes() throws IOException {
+    return Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+  }
+
+  public final File getFile() {
+    return file;
+  }
+
+  @Override
+  public String toString() {
+    return file.toString();
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 5;
+    hash = 47 * hash + Objects.hashCode(this.file);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    } else if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    final FileDataBase other = (FileDataBase) obj;
+    return Objects.equals(this.file, other.file);
+  }
 
 }

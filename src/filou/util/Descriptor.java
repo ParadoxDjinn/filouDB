@@ -1,26 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright 2016 dark.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package filou.util;
 
 import filou.entries.*;
@@ -46,6 +23,14 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
   private final Type type;
   private final Descriptor[] descriptors;
   private final Supplier<Entry> buildEntry;
+
+  public static StructBuilder buildStruct(String key) {
+    return new StructBuilder(key);
+  }
+
+  public static ArrayBuilder buildArray(String key) {
+    return new ArrayBuilder(key);
+  }
 
   public static Descriptor buildStruct(String key, Consumer<StructBuilder> consumer) {
     StructBuilder builder = new StructBuilder(key);
@@ -355,6 +340,19 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
 
   public int size() {
     return descriptors != null ? descriptors.length : 0;
+  }
+
+  public boolean contains(String key, Type type) {
+    return find(key, type) != null;
+  }
+
+  public Descriptor find(String key, Type type) {
+    for (Descriptor child : descriptors) {
+      if (child.key.equals(key) && child.type == type) {
+        return child;
+      }
+    }
+    return null;
   }
 
   @Override

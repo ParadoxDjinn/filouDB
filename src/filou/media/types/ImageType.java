@@ -45,7 +45,7 @@ public class ImageType extends Type<Image> {
   @Override
   public Image in(Register register, String key, String fileSuffix,
           InputStream stream) throws IOException {
-    return SwingFXUtils.toFXImage(ImageIO.read(stream), null);
+    return new Image(stream);
   }
 
   @Override
