@@ -96,8 +96,20 @@ public final class Register {
     return byClass.get(type).contains(key);
   }
 
+  public <T> boolean contains(Entry<T> entry) {
+    final TypeEntry typeEntry = byClass.get(entry.getType().getKey());
+    return typeEntry.contains(entry.getKey())
+            && typeEntry.get(entry.getKey()) == entry;
+  }
+
   public <T> void remove(String key, Class<T> type) {
     byClass.get(type).remove(key);
+  }
+
+  public <T> void remove(Entry<T> entry) {
+    if (contains(entry)) {
+      byClass.get(entry.getType().getKey()).remove(entry.getKey());
+    }
   }
 
   public <T> T get(String key, Class<T> type) {
@@ -110,6 +122,14 @@ public final class Register {
 
   public <T> T get(String key, Class<T> type, T defaultValue) {
     return (T) byClass.get(type).get(key, defaultValue);
+  }
+
+  public <T> TypeEntry<T> get(Class<T> type) {
+    return byClass.get(type);
+  }
+
+  public <T> void clear(Class<T> type) {
+    byClass.get(type).clear();
   }
 
   public <T> Stream<Entry<T>> stream(Class<T> type) {

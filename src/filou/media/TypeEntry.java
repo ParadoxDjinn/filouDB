@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * @author dark
  * @param <V> value
  */
-public class TypeEntry<V> {
+public final class TypeEntry<V> {
 
   final Type<V> type;
   private final HashMap<String, Entry<V>> data = new HashMap<>();
@@ -20,15 +20,15 @@ public class TypeEntry<V> {
     this.type = type;
   }
 
-  Type<V> getType() {
+  public Type<V> getType() {
     return type;
   }
 
-  Entry<V> set(String key, V value) {
+  public Entry<V> set(String key, V value) {
     return set(key, type.getDefaultFileSuffix(), value);
   }
 
-  Entry<V> set(String key, String fileSuffix, V value) {
+  public Entry<V> set(String key, String fileSuffix, V value) {
     if (!type.getFileSuffixes().contains(fileSuffix)) {
       throw new IllegalArgumentException(
               "FileSuffix not supported:" + fileSuffix);
@@ -50,23 +50,23 @@ public class TypeEntry<V> {
     }
   }
 
-  void remove(String key) {
-    data.remove(key);
+  public Entry<V> remove(String key) {
+    return data.remove(key);
   }
 
-  boolean contains(String key) {
+  public boolean contains(String key) {
     return data.containsKey(key);
   }
 
-  V get(String key) {
+  public V get(String key) {
     return data.get(key).getValue();
   }
 
-  Entry<V> getEntry(String key) {
+  public Entry<V> getEntry(String key) {
     return data.get(key);
   }
 
-  V get(String key, V defaultValue) {
+  public V get(String key, V defaultValue) {
     if (data.containsKey(key)) {
       return data.get(key).getValue();
     } else {
@@ -74,11 +74,11 @@ public class TypeEntry<V> {
     }
   }
 
-  void clear() {
+  public void clear() {
     data.clear();
   }
 
-  Stream<Entry<V>> stream() {
+  public Stream<Entry<V>> stream() {
     return data.entrySet().stream().map(entry -> entry.getValue());
   }
 
