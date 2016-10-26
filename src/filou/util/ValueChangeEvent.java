@@ -1,12 +1,15 @@
 package filou.util;
 
+import filou.observe.ChangeEvent;
+import filou.observe.Observable;
+
 /**
  *
  * @author dark
  * @param <V> value
- * @param <E> entry
+ * @param <O> Observable
  */
-public interface ValueChangeEvent<V, E extends ValueEntry<V, E>> extends ChangeEvent<E> {
+public interface ValueChangeEvent<V, O extends Observable<O>> extends ChangeEvent<O> {
 
   public V getOldValue();
 

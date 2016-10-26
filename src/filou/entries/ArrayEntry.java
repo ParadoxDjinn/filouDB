@@ -1,5 +1,9 @@
 package filou.entries;
 
+import filou.observe.ChangeListener;
+import filou.observe.ChangeEvent;
+import filou.observe.ChangeSupport;
+import filou.media.Register;
 import filou.util.*;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -8,6 +12,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -253,6 +258,23 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
     return ((UUIDEntry) list.get(index)).get();
   }
 
+  public <V> void addData(V value) {
+    checkType(Type.Data);
+    list.add(new DataEntry<>(descriptor.get(0), value));
+    ChangeSupport.fireChangedEvent(changeSupport);
+  }
+
+  public <V> void setData(int index, V value) {
+    checkType(Type.Data);
+    ((DataEntry<V>) list.get(index)).set(value);
+    ChangeSupport.fireChangedEvent(changeSupport);
+  }
+
+  public <V> V getData(int index) {
+    checkType(Type.Data);
+    return ((DataEntry<V>) list.get(index)).get();
+  }
+
   public ArrayEntry addArray() {
     checkType(Type.Array);
     ArrayEntry result
@@ -363,6 +385,10 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
     return list.iterator();
   }
 
+  public Stream<Entry> stream() {
+    return list.stream();
+  }
+
   public void set(ArrayEntry array) {
     if (!this.descriptor.equals(array.getDescriptor())) {
       throw new IllegalArgumentException();
@@ -387,21 +413,26 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
     return new ArrayEntry(this);
   }
 
+  public void clear() {
+    list.clear();
+    ChangeSupport.fireChangedEvent(changeSupport);
+  }
+
   @Override
-  public void out(DataOutput output) throws IOException {
+  public void out(Register register, DataOutput output) throws IOException {
     output.writeInt(list.size());
     for (Entry entry : list) {
-      entry.out(output);
+      entry.out(register, output);
     }
   }
 
   @Override
-  public void in(DataInput input) throws IOException {
+  public void in(Register register, DataInput input) throws IOException {
     list.clear();
     int size = input.readInt();
     for (int i = 0; i < size; i++) {
       Entry entry = descriptor.get(0).buildEntry();
-      entry.in(input);
+      entry.in(register, input);
       list.add(entry);
     }
     ChangeSupport.fireChangedEvent(changeSupport);
@@ -427,7 +458,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
     }
 
     @Override
-    public ArrayEntry getEntry() {
+    public ArrayEntry getObservable() {
       return ArrayEntry.this;
     }
 

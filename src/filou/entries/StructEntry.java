@@ -1,5 +1,9 @@
 package filou.entries;
 
+import filou.observe.ChangeListener;
+import filou.observe.ChangeEvent;
+import filou.observe.ChangeSupport;
+import filou.media.Register;
 import filou.util.*;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -291,6 +295,35 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
     return defaultValue;
   }
 
+  public <V> void setData(String key, V value) {
+    ((DataEntry<V>) content.get(checkType(key, Type.Data))).set(value);
+    ChangeSupport.fireChangedEvent(changeSupport);
+  }
+
+  public <V> V getData(String key) {
+    return ((DataEntry<V>) content.get(checkType(key, Type.Data))).get();
+  }
+
+  public <V> V getData(String key, V defaultValue) {
+    if (types.containsKey(key)) {
+      Descriptor desKey = types.get(key);
+      if (desKey.getType() == Type.Data) {
+        return ((DataEntry<V>) content.get(desKey)).get();
+      }
+    }
+    return defaultValue;
+  }
+
+  public Class<?> getDataType(String key) {
+    if (types.containsKey(key)) {
+      Descriptor desKey = types.get(key);
+      if (desKey.getType() == Type.Data) {
+        return ((DataEntry<?>) content.get(desKey)).getValueType();
+      }
+    }
+    return null;
+  }
+
   public void setArray(String key, ArrayEntry value) {
     getArray(key).set(value);
     ChangeSupport.fireChangedEvent(changeSupport);
@@ -310,6 +343,11 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
 
   public void setStruct(String key, StructEntry value) {
     getStruct(key).set(value);
+    ChangeSupport.fireChangedEvent(changeSupport);
+  }
+
+  public void setStruct(StructEntry value) {
+    getStruct(value.getDescriptor().getKey()).set(value);
     ChangeSupport.fireChangedEvent(changeSupport);
   }
 
@@ -393,16 +431,16 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
   }
 
   @Override
-  public void out(DataOutput output) throws IOException {
+  public void out(Register register, DataOutput output) throws IOException {
     for (Descriptor key : types.values()) {
-      content.get(key).out(output);
+      content.get(key).out(register, output);
     }
   }
 
   @Override
-  public void in(DataInput input) throws IOException {
+  public void in(Register register, DataInput input) throws IOException {
     for (Descriptor key : types.values()) {
-      content.get(key).in(input);
+      content.get(key).in(register, input);
     }
     ChangeSupport.fireChangedEvent(changeSupport);
   }
@@ -427,7 +465,7 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
     }
 
     @Override
-    public StructEntry getEntry() {
+    public StructEntry getObservable() {
       return StructEntry.this;
     }
 

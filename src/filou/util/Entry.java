@@ -1,6 +1,7 @@
 package filou.util;
 
-import filou.io.DataIO;
+import filou.observe.Observable;
+import filou.media.Register;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -10,11 +11,7 @@ import java.io.IOException;
  * @author dark
  * @param <E> self
  */
-public interface Entry<E extends Entry<E>> extends DataIO {
-
-  public <T extends ChangeEvent<E>> void addListener(ChangeListener<E, T> listener);
-
-  public <T extends ChangeEvent<E>> void removeListener(ChangeListener<E, T> listener);
+public interface Entry<E extends Entry<E>> extends Observable<E> {
 
   public Descriptor getDescriptor();
 
@@ -24,18 +21,7 @@ public interface Entry<E extends Entry<E>> extends DataIO {
     return getDescriptor().getType();
   }
 
-  public static Entry inEntry(DataInput input) throws IOException {
-    Entry entry = Descriptor.inDescriptor(input).buildEntry();
-    entry.in(input);
-    return entry;
-  }
+  public void out(Register register, DataOutput output) throws IOException;
 
-  public static void outEntry(Entry entry, DataOutput output) throws IOException {
-    final Descriptor descriptor = entry.getDescriptor();
-    Descriptor.outDescriptor(descriptor, output);
-    entry.out(output);
-  }
-
-  public ChangeEvent<E> changeEvent();
-
+  public void in(Register register, DataInput input) throws IOException;
 }

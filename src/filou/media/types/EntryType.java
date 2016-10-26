@@ -1,13 +1,10 @@
 package filou.media.types;
 
-import filou.io.DataUtil;
 import filou.media.Register;
 import filou.media.Type;
 import filou.util.Descriptor;
 import filou.util.Entry;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  *
@@ -33,21 +30,21 @@ public final class EntryType extends Type<Entry> {
   @Override
   public Entry in(Register register, String key, String fileSuffix,
           InputStream stream) throws IOException {
-    return DataUtil.load(stream, dataInput -> {
-      final Descriptor descriptor = Descriptor.inDescriptor(dataInput);
+    try (DataInputStream is = new DataInputStream(stream)) {
+      final Descriptor descriptor = Descriptor.inDescriptor(is);
       Entry entry = descriptor.buildEntry();
-      entry.in(dataInput);
+      entry.in(register, is);
       return entry;
-    });
+    }
   }
 
   @Override
   public void out(Register register, String key, String fileSuffix,
           Entry value, OutputStream stream) throws IOException {
-    DataUtil.save(stream, value, (entry, outputData) -> {
-      Descriptor.outDescriptor(entry.getDescriptor(), outputData);
-      entry.out(outputData);
-    });
+    try (DataOutputStream os = new DataOutputStream(stream)) {
+      Descriptor.outDescriptor(value.getDescriptor(), os);
+      value.out(register, os);
+    }
   }
 
 }

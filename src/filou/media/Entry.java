@@ -5,6 +5,10 @@
  */
 package filou.media;
 
+import filou.observe.ChangeListener;
+import filou.observe.ChangeEvent;
+import filou.observe.ChangeSupport;
+import filou.observe.Observable;
 import filou.util.*;
 import java.io.IOException;
 import java.io.InputStream;

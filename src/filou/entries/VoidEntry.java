@@ -1,5 +1,9 @@
 package filou.entries;
 
+import filou.observe.ChangeListener;
+import filou.observe.ChangeEvent;
+import filou.observe.ChangeSupport;
+import filou.media.Register;
 import filou.util.*;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -77,19 +81,18 @@ public final class VoidEntry implements ValueEntry<Entry, VoidEntry> {
   }
 
   @Override
-  public void out(DataOutput output) throws IOException {
-
+  public void out(Register register, DataOutput output) throws IOException {
     if (value != null) {
       final Descriptor valueDescriptor = value.getDescriptor();
       Descriptor.outDescriptor(valueDescriptor, output);
-      value.out(output);
+      value.out(register, output);
     } else {
       Descriptor.outDescriptor(descriptor, output);
     }
   }
 
   @Override
-  public void in(DataInput input) throws IOException {
+  public void in(Register register, DataInput input) throws IOException {
     if (changeEvent != null) {
       changeEvent.old = this.value;
     }
@@ -98,7 +101,7 @@ public final class VoidEntry implements ValueEntry<Entry, VoidEntry> {
       this.value = null;
     } else {
       this.value = valueDescriptor.buildEntry();
-      value.in(input);
+      value.in(register, input);
       ChangeSupport.fireChangedEvent(changeSupport);
     }
   }
@@ -143,7 +146,7 @@ public final class VoidEntry implements ValueEntry<Entry, VoidEntry> {
     }
 
     @Override
-    public VoidEntry getEntry() {
+    public VoidEntry getObservable() {
       return VoidEntry.this;
     }
 

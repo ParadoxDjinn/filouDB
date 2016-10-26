@@ -1,5 +1,9 @@
 package filou.entries;
 
+import filou.observe.ChangeListener;
+import filou.observe.ChangeEvent;
+import filou.observe.ChangeSupport;
+import filou.media.Register;
 import filou.util.*;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -77,12 +81,12 @@ public final class TimestampEntry implements ValueEntry<Instant, TimestampEntry>
   }
 
   @Override
-  public void out(DataOutput output) throws IOException {
+  public void out(Register register, DataOutput output) throws IOException {
     output.writeLong(value.toEpochMilli());
   }
 
   @Override
-  public void in(DataInput input) throws IOException {
+  public void in(Register register, DataInput input) throws IOException {
     if (changeEvent != null) {
       changeEvent.old = this.value;
     }
@@ -130,7 +134,7 @@ public final class TimestampEntry implements ValueEntry<Instant, TimestampEntry>
     }
 
     @Override
-    public TimestampEntry getEntry() {
+    public TimestampEntry getObservable() {
       return TimestampEntry.this;
     }
 

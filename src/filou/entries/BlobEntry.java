@@ -1,8 +1,12 @@
 package filou.entries;
 
+import filou.observe.ChangeListener;
+import filou.observe.ChangeEvent;
+import filou.observe.ChangeSupport;
 import filou.util.Descriptor;
 import filou.util.Entry;
 import filou.io.DataUtil;
+import filou.media.Register;
 import filou.util.*;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -65,13 +69,13 @@ public final class BlobEntry implements Entry<BlobEntry> {
   }
 
   @Override
-  public void out(DataOutput output) throws IOException {
+  public void out(Register register, DataOutput output) throws IOException {
     output.writeInt(data.length);
     output.write(data);
   }
 
   @Override
-  public void in(DataInput input) throws IOException {
+  public void in(Register register, DataInput input) throws IOException {
     data = new byte[input.readInt()];
     input.readFully(data);
     ChangeSupport.fireChangedEvent(changeSupport);
@@ -97,7 +101,7 @@ public final class BlobEntry implements Entry<BlobEntry> {
     }
 
     @Override
-    public BlobEntry getEntry() {
+    public BlobEntry getObservable() {
       return BlobEntry.this;
     }
 

@@ -1,7 +1,6 @@
 package filou.util;
 
 import filou.entries.*;
-import filou.io.DataIO;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -42,6 +41,12 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
     ArrayBuilder builder = new ArrayBuilder(key);
     consumer.accept(builder);
     return builder.build();
+  }
+
+  public static Descriptor buildArray(String key, Descriptor type) {
+    return new Descriptor(key, Type.Array, ArrayEntry::new, new Descriptor[]{
+      Objects.requireNonNull(type)
+    });
   }
 
   Descriptor(String key, Type type, Function<Descriptor, Entry> buildEntry, Descriptor[] descriptors) {
@@ -107,6 +112,15 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
     return new Descriptor(key, Type.Void, VoidEntry::new, null);
   }
 
+  public static Descriptor createData(String key) {
+    return new Descriptor(key, Type.Data, DataEntry::new, null);
+  }
+
+  public static <T> Descriptor createData(String key, Class<T> type) {
+    return new Descriptor(key, Type.Data,
+            descriptor -> new DataEntry<>(descriptor, type), null);
+  }
+
   public static Entry createEntry(Descriptor descriptor) {
     switch (descriptor.getType()) {
       case Blob:
@@ -139,6 +153,8 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
         return new StructEntry(descriptor);
       case Void:
         return new VoidEntry(descriptor);
+      case Data:
+        return new DataEntry(descriptor);
       default:
         throw new UnsupportedOperationException("Not supported");
     }
@@ -213,8 +229,29 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
       ds.put(key, createVoid(key));
     }
 
+    public void addData(String key) {
+      ds.put(key, createData(key));
+    }
+
+    public <T> void addData(String key, Class<T> type) {
+      ds.put(key, createData(key, type));
+    }
+
     public void add(Descriptor descriptor) {
+      if (ds.containsKey(descriptor.key)) {
+        throw new IllegalArgumentException(
+                "Key already set:" + descriptor.key);
+      }
       ds.put(descriptor.key, descriptor);
+    }
+
+    public boolean contains(Descriptor descriptor) {
+      return ds.containsKey(descriptor.key)
+              ? ds.get(descriptor.key).equals(descriptor) : false;
+    }
+
+    public boolean blocked(Descriptor descriptor) {
+      return ds.containsKey(descriptor.key);
     }
 
     public Descriptor build() {
@@ -296,6 +333,14 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
       type = createVoid(ARRAY_TYPE);
     }
 
+    public void setData() {
+      type = createData(ARRAY_TYPE);
+    }
+
+    public <T> void setData(Class<T> type) {
+      this.type = createData(ARRAY_TYPE, type);
+    }
+
     public void set(Descriptor descriptor) {
       type = descriptor;
     }
@@ -322,12 +367,13 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
     return this.type == type;
   }
 
-  public void checkType(Type type) {
+  public Descriptor checkType(Type type) {
     if (this.type != type) {
       throw new IllegalArgumentException(
               "descriptor is not a type of " + type.name()
               + " ( " + toString() + " )");
     }
+    return this;
   }
 
   public Entry buildEntry() {
@@ -449,42 +495,6 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
         return result;
       default:
         return null;
-    }
-  }
-
-  public static class Data implements DataIO {
-
-    private Descriptor descriptor;
-
-    public Data(Descriptor descriptor) {
-      this.descriptor = descriptor;
-    }
-
-    public Data() {
-      this.descriptor = null;
-    }
-
-    public void setDescriptor(Descriptor descriptor) {
-      this.descriptor = descriptor;
-    }
-
-    public Descriptor getDescriptor() {
-      return descriptor;
-    }
-
-    @Override
-    public String toString() {
-      return Objects.toString(descriptor);
-    }
-
-    @Override
-    public void out(DataOutput output) throws IOException {
-      outDescriptor(descriptor, output);
-    }
-
-    @Override
-    public void in(DataInput input) throws IOException {
-      this.descriptor = inDescriptor(input);
     }
   }
 
