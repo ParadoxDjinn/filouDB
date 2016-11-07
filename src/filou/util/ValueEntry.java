@@ -1,5 +1,7 @@
 package filou.util;
 
+import filou.media.Register;
+
 /**
  *
  * @author dark
@@ -17,5 +19,13 @@ public interface ValueEntry<V, E extends ValueEntry<V, E>> extends Entry<E> {
 
   @Override
   public ValueChangeEvent<V, E> changeEvent();
+
+  @Override
+  public default void init(Register register) {
+  }
+
+  @Override
+  public default void uninit(Register register) {
+  }
 
 }

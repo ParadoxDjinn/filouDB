@@ -471,4 +471,29 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
 
   }
 
+  @Override
+  public void init(Register register) {
+    if (this.register != null && this.register != register) {
+      throw new IllegalStateException("Wrong register");
+    } else {
+      this.register = register;
+    }
+    for (Entry entry : content.values()) {
+      entry.init(register);
+    }
+  }
+
+  @Override
+  public void uninit(Register register) {
+    if (this.register != null && this.register != register) {
+      throw new IllegalStateException("Wrong register");
+    } else {
+      this.register = register;
+    }
+    for (Entry entry : content.values()) {
+      entry.uninit(register);
+    }
+  }
+  private Register register;
+
 }

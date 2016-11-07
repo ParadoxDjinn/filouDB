@@ -22,7 +22,8 @@ public enum Type {
   Struct('S', StructEntry.class),
   Blob('O', BlobEntry.class),
   Timestamp('T', TimestampEntry.class),
-  UUID('U', UUIDEntry.class);
+  UUID('U', UUIDEntry.class),
+  Data('D', DataEntry.class);
 
   private Type(char code, Class<? extends Entry> utilType) {
     this.code = code;

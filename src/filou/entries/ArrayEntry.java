@@ -12,7 +12,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -35,7 +34,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public ArrayEntry(ArrayEntry array) {
     this.descriptor = array.getDescriptor();
-    array.content().forEach(object -> list.add(object.copy()));
+    array.content().map(Entry::copy).forEach(this::add);
   }
 
   @Override
@@ -73,8 +72,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addBoolean(boolean value) {
     checkType(Type.Boolean);
-    list.add(new BoolEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new BoolEntry(descriptor.get(0), value));
   }
 
   public void setBoolean(int index, boolean value) {
@@ -90,8 +88,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addByte(byte value) {
     checkType(Type.Byte);
-    list.add(new ByteEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new ByteEntry(descriptor.get(0), value));
   }
 
   public void setByte(int index, byte value) {
@@ -107,8 +104,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addChar(char value) {
     checkType(Type.Char);
-    list.add(new CharEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new CharEntry(descriptor.get(0), value));
   }
 
   public void setChar(int index, char value) {
@@ -124,8 +120,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addString(String value) {
     checkType(Type.String);
-    list.add(new StringEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new StringEntry(descriptor.get(0), value));
   }
 
   public void setString(int index, String value) {
@@ -141,8 +136,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addShort(short value) {
     checkType(Type.Short);
-    list.add(new ShortEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new ShortEntry(descriptor.get(0), value));
   }
 
   public void setShort(int index, short value) {
@@ -158,8 +152,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addInteger(int value) {
     checkType(Type.Integer);
-    list.add(new IntegerEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new IntegerEntry(descriptor.get(0), value));
   }
 
   public void setInteger(int index, int value) {
@@ -175,8 +168,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addLong(long value) {
     checkType(Type.Long);
-    list.add(new LongEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new LongEntry(descriptor.get(0), value));
   }
 
   public void setLong(int index, long value) {
@@ -192,8 +184,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addFloat(float value) {
     checkType(Type.Float);
-    list.add(new FloatEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new FloatEntry(descriptor.get(0), value));
   }
 
   public void setFloat(int index, float value) {
@@ -209,8 +200,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addDouble(double value) {
     checkType(Type.Double);
-    list.add(new DoubleEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new DoubleEntry(descriptor.get(0), value));
   }
 
   public void setDouble(int index, double value) {
@@ -226,8 +216,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addTimestamp(Instant value) {
     checkType(Type.Timestamp);
-    list.add(new TimestampEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new TimestampEntry(descriptor.get(0), value));
   }
 
   public void setTimestamp(int index, Instant value) {
@@ -243,8 +232,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addUUID(UUID value) {
     checkType(Type.UUID);
-    list.add(new UUIDEntry(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new UUIDEntry(descriptor.get(0), value));
   }
 
   public void setUUID(int index, UUID value) {
@@ -260,8 +248,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public <V> void addData(V value) {
     checkType(Type.Data);
-    list.add(new DataEntry<>(descriptor.get(0), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new DataEntry<>(descriptor.get(0), value));
   }
 
   public <V> void setData(int index, V value) {
@@ -277,10 +264,8 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public ArrayEntry addArray() {
     checkType(Type.Array);
-    ArrayEntry result
-            = new ArrayEntry(getContentDescriptor());
-    list.add(result);
-    ChangeSupport.fireChangedEvent(changeSupport);
+    ArrayEntry result = new ArrayEntry(getContentDescriptor());
+    add(result);
     return result;
   }
 
@@ -289,8 +274,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
     if (!getContentDescriptor().equals(value.getDescriptor())) {
       throw new IllegalArgumentException();
     }
-    list.add((Entry) value.copy());
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add((Entry) value.copy());
   }
 
   public void setArray(int index, ArrayEntry value) {
@@ -298,7 +282,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
     if (!getContentDescriptor().equals(value.getDescriptor())) {
       throw new IllegalArgumentException();
     }
-    list.set(index, (Entry) value.copy());
+    list.set(index, value.copy());
     ChangeSupport.fireChangedEvent(changeSupport);
   }
 
@@ -310,8 +294,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
   public StructEntry addStruct() {
     checkType(Type.Struct);
     StructEntry result = new StructEntry(getContentDescriptor());
-    list.add(result);
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(result);
     return result;
   }
 
@@ -320,8 +303,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
     if (!getContentDescriptor().equals(value.getDescriptor())) {
       throw new IllegalArgumentException();
     }
-    list.add((Entry) value.copy());
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(value.copy());
   }
 
   public void setStruct(int index, StructEntry value) {
@@ -329,7 +311,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
     if (!getContentDescriptor().equals(value.getDescriptor())) {
       throw new IllegalArgumentException();
     }
-    list.set(index, (Entry) value.copy());
+    list.set(index, value.copy());
     ChangeSupport.fireChangedEvent(changeSupport);
   }
 
@@ -340,8 +322,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addBlob(byte[] value) {
     checkType(Type.Blob);
-    list.add(new BlobEntry(getContentDescriptor(), value));
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(new BlobEntry(getContentDescriptor(), value));
   }
 
   public void setBlob(int index, byte[] value) {
@@ -357,13 +338,23 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   public void addEntry(Entry value) {
     checkType(value.getDescriptor().getType());
-    list.add(value);
-    ChangeSupport.fireChangedEvent(changeSupport);
+    add(value);
   }
 
   public void setEntry(int index, Entry value) {
     checkType(value.getDescriptor().getType());
     list.set(index, value);
+    if (register != null) {
+      value.init(register);
+    }
+    ChangeSupport.fireChangedEvent(changeSupport);
+  }
+
+  private void add(Entry entry) {
+    list.add(entry);
+    if (register != null) {
+      entry.init(register);
+    }
     ChangeSupport.fireChangedEvent(changeSupport);
   }
 
@@ -394,8 +385,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
       throw new IllegalArgumentException();
     }
     this.list.clear();
-    array.content().forEach(
-            object -> list.add(object.copy()));
+    array.content().map(Entry::copy).forEach(this::add);
     ChangeSupport.fireChangedEvent(changeSupport);
   }
 
@@ -414,6 +404,11 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
   }
 
   public void clear() {
+    if (register != null) {
+      for (Entry entry : list) {
+        entry.uninit(register);
+      }
+    }
     list.clear();
     ChangeSupport.fireChangedEvent(changeSupport);
   }
@@ -434,6 +429,9 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
       Entry entry = descriptor.get(0).buildEntry();
       entry.in(register, input);
       list.add(entry);
+      if (register != null) {
+        entry.init(register);
+      }
     }
     ChangeSupport.fireChangedEvent(changeSupport);
   }
@@ -464,4 +462,28 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   }
 
+  @Override
+  public void init(Register register) {
+    if (this.register != null && this.register != register) {
+      throw new IllegalStateException("Wrong register");
+    } else {
+      this.register = register;
+      for (Entry entry : list) {
+        entry.init(register);
+      }
+    }
+  }
+
+  @Override
+  public void uninit(Register register) {
+    if (this.register != null && this.register != register) {
+      throw new IllegalStateException("Wrong register");
+    } else {
+      this.register = register;
+      for (Entry entry : list) {
+        entry.uninit(register);
+      }
+    }
+  }
+  private Register register;
 }

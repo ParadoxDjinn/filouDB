@@ -1,6 +1,7 @@
 package filou.media;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,15 +14,21 @@ import java.util.stream.Stream;
  */
 public final class TypeEntry<V> {
 
+  final WeakReference<Register> regReference;
   final Type<V> type;
   private final HashMap<String, Entry<V>> data = new HashMap<>();
 
-  TypeEntry(Type<V> type) {
+  TypeEntry(Register register, Type<V> type) {
+    this.regReference = new WeakReference<>(register);
     this.type = type;
   }
 
   public Type<V> getType() {
     return type;
+  }
+
+  public Register getRegister() {
+    return regReference.get();
   }
 
   public Entry<V> set(String key, V value) {
@@ -44,7 +51,7 @@ public final class TypeEntry<V> {
                 + " old:" + entry.getSuffix());
       }
     } else {
-      final Entry<V> entry = new Entry<>(key, fileSuffix, value, type);
+      final Entry<V> entry = new Entry<>(key, fileSuffix, value, this);
       data.put(key, entry);
       return entry;
     }
@@ -83,7 +90,7 @@ public final class TypeEntry<V> {
   }
 
   void in(Register register, SourceEntry entry) throws IOException {
-    data.put(entry.key, new Entry<>(entry, register, type));
+    data.put(entry.key, new Entry<>(entry, register, this));
   }
 
   void outAll(Register register, Set<SourceEntry> entrys) throws IOException {
@@ -92,6 +99,10 @@ public final class TypeEntry<V> {
       final SourceEntry entry = p.toSourceEntry(register);
       entrys.add(entry);
     }
+  }
+
+  public boolean isDead() {
+    return regReference.get() == null;
   }
 
 }

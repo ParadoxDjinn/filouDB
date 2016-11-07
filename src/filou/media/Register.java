@@ -32,7 +32,7 @@ public final class Register {
                 "Required Type not registed:" + requiredType.getName());
       }
     }
-    final TypeEntry holder = new TypeEntry(type);
+    final TypeEntry holder = new TypeEntry(this, type);
     for (Iterator<SourceEntry> iterator = unknownEntries.iterator(); iterator.hasNext();) {
       SourceEntry next = iterator.next();
       if (type.getFileSuffixes().contains(next.fileSuffix)) {
@@ -60,6 +60,8 @@ public final class Register {
       TypeEntry remove = byClass.remove(type.getKey());
       remove.outAll(this, unknownEntries);
       type.getFileSuffixes().stream().forEach(byFileSuffix::remove);
+      remove.regReference.clear();
+      remove.clear();
     } catch (IOException ex) {
       Logger.getLogger(Register.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
       throw new IllegalStateException(ex);

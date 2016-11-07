@@ -107,4 +107,12 @@ public final class BlobEntry implements Entry<BlobEntry> {
 
   }
 
+  @Override
+  public void init(Register register) {
+  }
+
+  @Override
+  public void uninit(Register register) {
+  }
+
 }

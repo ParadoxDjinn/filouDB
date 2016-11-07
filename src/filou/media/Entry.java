@@ -13,6 +13,7 @@ import filou.util.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -26,7 +27,7 @@ public final class Entry<V> implements Observable<Entry<V>> {
 
   private final String key;
   private final String suffix;
-  private final Type<V> type;
+  private final WeakReference<TypeEntry<V>> type;
   private V value;
 
   private final LocalDateTime creationTime;
@@ -36,26 +37,27 @@ public final class Entry<V> implements Observable<Entry<V>> {
   private ChangeSupport<Entry<V>> changeSupport;
   private EntryChangeEvent changeEvent;
 
-  Entry(SourceEntry entry, Register register, Type<V> type) throws IOException {
+  Entry(SourceEntry entry, Register register, TypeEntry<V> type) throws IOException {
     this.key = entry.key;
     this.suffix = entry.fileSuffix;
-    this.type = type;
-    this.value = type.in(register, key, suffix, entry.buffer.asInputStream());
+    this.type = new WeakReference<>(type);
+    this.value = type.type.in(register, key, suffix, entry.buffer.asInputStream());
+    checkInit(value);
     this.creationTime = LocalDateTime.ofInstant(entry.creationTime, ZoneId.systemDefault());
     this.lastModifiedTime = LocalDateTime.ofInstant(entry.lastModifiedTime, ZoneId.systemDefault());
     this.lastAccessTime = LocalDateTime.ofInstant(entry.lastAccessTime, ZoneId.systemDefault());
   }
 
-  Entry(String key, String suffix, V value, Type<V> type) {
+  Entry(String key, String suffix, V value, TypeEntry<V> type) {
     this.key = key;
     this.suffix = suffix;
     this.value = value;
-
+    this.type = new WeakReference<>(type);
+    checkInit(value);
     LocalDateTime now = LocalDateTime.now();
     this.creationTime = now;
     this.lastModifiedTime = now;
     this.lastAccessTime = now;
-    this.type = type;
   }
 
   public String getKey() {
@@ -75,6 +77,8 @@ public final class Entry<V> implements Observable<Entry<V>> {
       }
       this.value = value;
       lastModifiedTime = now;
+      checkUninit(this.value);
+      checkInit(this.value);
     }
 
     ChangeSupport.fireChangedEvent(changeSupport);
@@ -98,15 +102,24 @@ public final class Entry<V> implements Observable<Entry<V>> {
   }
 
   public Type<V> getType() {
-    return type;
+    return type.get().type;
+  }
+
+  public Register getRegister() {
+    return type.get().getRegister();
+  }
+
+  public boolean isDead() {
+    TypeEntry<V> typeEntry = type.get();
+    return typeEntry == null ? true : typeEntry.isDead();
   }
 
   public void in(Register register, InputStream stream) throws IOException {
-    setValue(type.in(register, key, suffix, stream));
+    setValue(type.get().type.in(register, key, suffix, stream));
   }
 
   public void out(Register register, OutputStream stream) throws IOException {
-    type.out(register, key, suffix, value, stream);
+    type.get().type.out(register, key, suffix, value, stream);
   }
 
   SourceEntry toSourceEntry(Register register) throws IOException {
@@ -116,6 +129,18 @@ public final class Entry<V> implements Observable<Entry<V>> {
             lastAccessTime.toInstant(ZoneOffset.UTC));
     out(register, result.buffer.asOutputStream());
     return result;
+  }
+
+  private void checkInit(V value) {
+    if (value instanceof SelfObservable) {
+      ((SelfObservable) value).init(this);
+    }
+  }
+
+  private void checkUninit(V value) {
+    if (value instanceof SelfObservable) {
+      ((SelfObservable) value).uninit(this);
+    }
   }
 
   @Override
