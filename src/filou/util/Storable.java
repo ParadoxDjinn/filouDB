@@ -9,5 +9,5 @@ import filou.media.Register;
  */
 public interface Storable {
 
-  public StructEntry save(Register register);
+  public StructEntry save(String key, Register register);
 }

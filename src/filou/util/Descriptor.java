@@ -447,8 +447,8 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
       return false;
     }
     final Descriptor other = (Descriptor) obj;
-    return Objects.equals(this.key, other.key) || this.type == other.type
-            || Arrays.deepEquals(this.descriptors, other.descriptors);
+    return Objects.equals(this.key, other.key) && this.type == other.type
+            && Arrays.deepEquals(this.descriptors, other.descriptors);
   }
 
   public static void outDescriptor(Descriptor descriptor,

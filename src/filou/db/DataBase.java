@@ -10,7 +10,6 @@ import filou.media.types.*;
 import filou.util.*;
 import filou.util.Descriptor;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 /**
@@ -29,47 +28,13 @@ public abstract class DataBase {
     register.register(TextType.TYPE);
   }
 
-  public final void add(Storable storable) {
-    REG.setEntry(register, UUID.randomUUID().toString(),
-            (Entry) storable.save(register));
-  }
-
-  public final void set(String key, Storable storable) {
-    REG.setEntry(register, key, (Entry) storable.save(register));
-  }
-
-  public final void get(String key, Loadable loadable) {
-    if (REG.containsEntry(register, key)) {
-      loadable.load(register, REG.getEntry(register, key));
-    }
-  }
-
-  public boolean contains(String key) {
-    return REG.containsEntry(register, key);
+  public void save(SelfRestorable restorable) {
+    REG.save(this.register, restorable);
   }
 
   public abstract void load() throws IOException;
 
   public abstract void save() throws IOException;
-
-  public final Stream<filou.media.Entry<Entry>> stream(Descriptor descriptor) {
-    return REG.entryStream(register)
-            .filter(pair -> pair.getValue().getDescriptor().equals(descriptor));
-  }
-
-  public final Stream<filou.media.Entry<ArrayEntry>> streamArray(Descriptor descriptor) {
-    descriptor.checkType(Type.Array);
-    return stream(descriptor)
-            .filter(pair -> pair.getValue().getDescriptor().equals(descriptor))
-            .map((filou.media.Entry<Entry> entry) -> (filou.media.Entry) entry);
-  }
-
-  public final Stream<filou.media.Entry<StructEntry>> streamStruct(Descriptor descriptor) {
-    descriptor.checkType(Type.Struct);
-    return stream(descriptor)
-            .filter(pair -> pair.getValue().getDescriptor().equals(descriptor))
-            .map((filou.media.Entry<Entry> entry) -> (filou.media.Entry) entry);
-  }
 
   public final void setObserver(Observer observer) {
     register.setObserver(observer);

@@ -9,5 +9,5 @@ import filou.media.Register;
  */
 public interface Loadable {
 
-  public void load(Register register, StructEntry struct);
+  public void load(String key, Register register, StructEntry struct);
 }

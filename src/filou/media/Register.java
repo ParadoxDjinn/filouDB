@@ -101,7 +101,7 @@ public final class Register {
   public <T> boolean contains(Entry<T> entry) {
     final TypeEntry typeEntry = byClass.get(entry.getType().getKey());
     return typeEntry.contains(entry.getKey())
-            && typeEntry.get(entry.getKey()) == entry;
+            && typeEntry.getEntry(entry.getKey()) == entry;
   }
 
   public <T> void remove(String key, Class<T> type) {
