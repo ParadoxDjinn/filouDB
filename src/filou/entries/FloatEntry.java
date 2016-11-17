@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author dark
  */
-public final class FloatEntry implements ValueEntry<Float, FloatEntry> {
+public final class FloatEntry extends ValueEntry<Float, FloatEntry> {
 
   private ChangeSupport<FloatEntry> changeSupport;
   private final Descriptor descriptor;

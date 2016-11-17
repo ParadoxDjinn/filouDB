@@ -11,7 +11,7 @@ import java.util.UUID;
  *
  * @author dark
  */
-public final class UUIDEntry implements ValueEntry<UUID, UUIDEntry> {
+public final class UUIDEntry extends ValueEntry<UUID, UUIDEntry> {
 
   private ChangeSupport<UUIDEntry> changeSupport;
   private final Descriptor descriptor;

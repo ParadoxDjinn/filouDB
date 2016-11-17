@@ -14,7 +14,7 @@ import java.util.Arrays;
  *
  * @author dark
  */
-public final class BlobEntry implements Entry<BlobEntry> {
+public final class BlobEntry extends Entry<BlobEntry> {
 
   private ChangeSupport<BlobEntry> changeSupport;
   private byte[] data;
@@ -61,7 +61,7 @@ public final class BlobEntry implements Entry<BlobEntry> {
   }
 
   @Override
-  public Entry copy() {
+  public BlobEntry copy() {
     return new BlobEntry(descriptor, data);
   }
 
@@ -102,14 +102,6 @@ public final class BlobEntry implements Entry<BlobEntry> {
       return BlobEntry.this;
     }
 
-  }
-
-  @Override
-  public void init(Register register) {
-  }
-
-  @Override
-  public void uninit(Register register) {
   }
 
 }

@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author dark
  */
-public final class DoubleEntry implements ValueEntry<Double, DoubleEntry> {
+public final class DoubleEntry extends ValueEntry<Double, DoubleEntry> {
 
   private ChangeSupport<DoubleEntry> changeSupport;
   private final Descriptor descriptor;

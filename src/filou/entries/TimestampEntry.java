@@ -11,7 +11,7 @@ import java.time.Instant;
  *
  * @author dark
  */
-public final class TimestampEntry implements ValueEntry<Instant, TimestampEntry> {
+public final class TimestampEntry extends ValueEntry<Instant, TimestampEntry> {
 
   private ChangeSupport<TimestampEntry> changeSupport;
   private final Descriptor descriptor;

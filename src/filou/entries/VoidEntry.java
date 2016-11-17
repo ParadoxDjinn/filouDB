@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * @author dark
  */
-public final class VoidEntry implements ValueEntry<Entry, VoidEntry> {
+public final class VoidEntry extends ValueEntry<Entry, VoidEntry> {
 
   private ChangeSupport<VoidEntry> changeSupport;
   private final Descriptor descriptor;

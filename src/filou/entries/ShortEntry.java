@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author dark
  */
-public final class ShortEntry implements ValueEntry<Short, ShortEntry> {
+public final class ShortEntry extends ValueEntry<Short, ShortEntry> {
 
   private ChangeSupport<ShortEntry> changeSupport;
   private final Descriptor descriptor;

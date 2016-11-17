@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  *
  * @author dark
  */
-public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
+public final class ArrayEntry extends Entry<ArrayEntry> implements Iterable<Entry> {
 
   private ChangeSupport<ArrayEntry> changeSupport;
   private Register register;
@@ -463,7 +463,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
   }
 
   @Override
-  public void init(Register register) {
+  void init(Register register) {
     if (this.register != null && this.register != register) {
       throw new IllegalStateException("Wrong register");
     } else {
@@ -475,7 +475,7 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
   }
 
   @Override
-  public void uninit(Register register) {
+  void uninit(Register register) {
     if (this.register != null && this.register != register) {
       throw new IllegalStateException("Wrong register");
     } else {
@@ -484,6 +484,10 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
         entry.uninit(register);
       }
     }
+  }
+
+  public Register getRegister() {
+    return register;
   }
 
 }

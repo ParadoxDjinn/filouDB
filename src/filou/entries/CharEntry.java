@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author dark
  */
-public final class CharEntry implements ValueEntry<Character, CharEntry> {
+public final class CharEntry extends ValueEntry<Character, CharEntry> {
 
   private ChangeSupport<CharEntry> changeSupport;
   private final Descriptor descriptor;

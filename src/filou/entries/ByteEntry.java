@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author dark
  */
-public final class ByteEntry implements ValueEntry<Byte, ByteEntry> {
+public final class ByteEntry extends ValueEntry<Byte, ByteEntry> {
 
   private ChangeSupport<ByteEntry> changeSupport;
   private final Descriptor descriptor;

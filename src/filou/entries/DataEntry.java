@@ -13,7 +13,7 @@ import java.util.UUID;
  * @author dark
  * @param <V> value
  */
-public final class DataEntry<V> implements ValueEntry<V, DataEntry<V>> {
+public final class DataEntry<V> extends ValueEntry<V, DataEntry<V>> {
 
   private ChangeSupport<DataEntry<V>> changeSupport;
   private final Descriptor descriptor;
@@ -211,16 +211,20 @@ public final class DataEntry<V> implements ValueEntry<V, DataEntry<V>> {
   }
 
   @Override
-  public void init(Register register) {
+  void init(Register register) {
     checkReg(register);
   }
 
   @Override
-  public void uninit(Register register) {
+  void uninit(Register register) {
     if (this.register != null && this.register != register) {
       throw new IllegalStateException("Wrong register");
     }
     this.register = null;
+  }
+
+  public Register getRegister() {
+    return register;
   }
 
 }

@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author dark
  */
-public final class LongEntry implements ValueEntry<Long, LongEntry> {
+public final class LongEntry extends ValueEntry<Long, LongEntry> {
 
   private ChangeSupport<LongEntry> changeSupport;
   private final Descriptor descriptor;

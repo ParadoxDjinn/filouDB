@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author dark
  */
-public final class BoolEntry implements ValueEntry<Boolean, BoolEntry> {
+public final class BoolEntry extends ValueEntry<Boolean, BoolEntry> {
 
   private ChangeSupport<BoolEntry> changeSupport;
   private final Descriptor descriptor;

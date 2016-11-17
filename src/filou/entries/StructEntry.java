@@ -17,7 +17,7 @@ import javafx.util.Pair;
  *
  * @author dark
  */
-public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Descriptor, Entry>> {
+public final class StructEntry extends Entry<StructEntry> implements Iterable<Pair<Descriptor, Entry>> {
 
   private ChangeSupport<StructEntry> changeSupport;
   private Register register;
@@ -473,7 +473,7 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
   }
 
   @Override
-  public void init(Register register) {
+  void init(Register register) {
     if (this.register != null && this.register != register) {
       throw new IllegalStateException("Wrong register");
     } else {
@@ -485,7 +485,7 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
   }
 
   @Override
-  public void uninit(Register register) {
+  void uninit(Register register) {
     if (this.register != null && this.register != register) {
       throw new IllegalStateException("Wrong register");
     } else {
@@ -494,6 +494,10 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
     for (Entry entry : content.values()) {
       entry.uninit(register);
     }
+  }
+
+  public Register getRegister() {
+    return register;
   }
 
 }

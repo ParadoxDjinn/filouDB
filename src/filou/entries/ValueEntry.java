@@ -9,24 +9,16 @@ import filou.media.Register;
  * @param <V> value
  * @param <E> self
  */
-public interface ValueEntry<V, E extends ValueEntry<V, E>> extends Entry<E> {
+public abstract class ValueEntry<V, E extends ValueEntry<V, E>> extends Entry<E> {
 
-  public void setValue(V value);
+  public abstract void setValue(V value);
 
-  public V getValue();
-
-  @Override
-  public ValueEntry<V, E> copy();
+  public abstract V getValue();
 
   @Override
-  public ValueChangeEvent<V, E> changeEvent();
+  public abstract E copy();
 
   @Override
-  public default void init(Register register) {
-  }
-
-  @Override
-  public default void uninit(Register register) {
-  }
+  public abstract ValueChangeEvent<V, E> changeEvent();
 
 }
