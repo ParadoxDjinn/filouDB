@@ -3,7 +3,7 @@ package filou.media.types;
 import filou.io.DataUtil;
 import filou.media.Register;
 import filou.media.Type;
-import filou.util.Descriptor;
+import filou.entries.Descriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

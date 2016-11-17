@@ -1,6 +1,6 @@
-package filou.util;
+package filou.entries;
 
-import filou.entries.*;
+import filou.util.IteratorTools;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -215,6 +215,10 @@ public final class Descriptor implements Comparable<Descriptor>, Iterable<Descri
 
     public void addArray(String key, Consumer<ArrayBuilder> consumer) {
       ds.put(key, buildArray(key, consumer));
+    }
+
+    public void addArray(String key, Descriptor descriptor) {
+      ds.put(key, buildArray(key, descriptor));
     }
 
     public void addStruct(String key, Consumer<StructBuilder> consumer) {

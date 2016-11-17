@@ -4,7 +4,6 @@ import filou.observe.ChangeListener;
 import filou.observe.ChangeEvent;
 import filou.observe.ChangeSupport;
 import filou.media.Register;
-import filou.util.*;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -21,6 +20,7 @@ import java.util.stream.Stream;
 public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
 
   private ChangeSupport<ArrayEntry> changeSupport;
+  private Register register;
   private final Descriptor descriptor;
   private final ArrayList<Entry> list = new ArrayList<>();
 
@@ -485,5 +485,5 @@ public final class ArrayEntry implements Iterable<Entry>, Entry<ArrayEntry> {
       }
     }
   }
-  private Register register;
+
 }

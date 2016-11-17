@@ -8,7 +8,7 @@ import filou.media.Register;
 import filou.media.Source;
 import filou.media.types.*;
 import filou.util.*;
-import filou.util.Descriptor;
+import filou.entries.Descriptor;
 import java.io.IOException;
 import java.util.stream.Stream;
 

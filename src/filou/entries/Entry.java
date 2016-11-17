@@ -1,4 +1,4 @@
-package filou.util;
+package filou.entries;
 
 import filou.observe.Observable;
 import filou.media.Register;

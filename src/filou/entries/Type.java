@@ -1,6 +1,5 @@
-package filou.util;
+package filou.entries;
 
-import filou.entries.*;
 import javafx.util.StringConverter;
 
 /**

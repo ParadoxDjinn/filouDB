@@ -20,6 +20,7 @@ import javafx.util.Pair;
 public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Descriptor, Entry>> {
 
   private ChangeSupport<StructEntry> changeSupport;
+  private Register register;
   private final Descriptor descriptor;
   private final TreeMap<String, Descriptor> types = new TreeMap<>();
   private final HashMap<Descriptor, Entry> content = new HashMap<>();
@@ -494,6 +495,5 @@ public final class StructEntry implements Entry<StructEntry>, Iterable<Pair<Desc
       entry.uninit(register);
     }
   }
-  private Register register;
 
 }

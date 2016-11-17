@@ -2,8 +2,8 @@ package filou.media;
 
 import filou.entries.ArrayEntry;
 import filou.entries.StructEntry;
-import filou.util.Descriptor;
-import filou.util.Entry;
+import filou.entries.Descriptor;
+import filou.entries.Entry;
 import filou.util.Loadable;
 import filou.util.SelfStorable;
 import filou.util.Storable;
@@ -37,11 +37,11 @@ public final class REG {
     return (T) register.byClass.get(type).get(key);
   }
 
-  public static <T extends filou.util.Entry> void setSingle(Register register, T entry) {
+  public static <T extends filou.entries.Entry> void setSingle(Register register, T entry) {
     REG.setEntry(register, entry.getDescriptor().toString(), entry);
   }
 
-  public static <T extends filou.util.Entry> T getSingle(Register register, Descriptor descriptor) {
+  public static <T extends filou.entries.Entry> T getSingle(Register register, Descriptor descriptor) {
     return REG.getEntry(register, descriptor.toString());
   }
 
@@ -142,28 +142,28 @@ public final class REG {
     register.byClass.get(type).stream().forEach(consumer);
   }
 
-  public static <T extends filou.util.Entry> void setEntry(Register register, String key, T value) {
-    register.byClass.get(filou.util.Entry.class).set(key, value);
+  public static <T extends filou.entries.Entry> void setEntry(Register register, String key, T value) {
+    register.byClass.get(filou.entries.Entry.class).set(key, value);
   }
 
   public static boolean containsEntry(Register register, String key) {
-    return register.byClass.get(filou.util.Entry.class).contains(key);
+    return register.byClass.get(filou.entries.Entry.class).contains(key);
   }
 
-  public static <T extends filou.util.Entry> T getEntry(Register register, String key) {
-    return (T) register.byClass.get(filou.util.Entry.class).get(key);
+  public static <T extends filou.entries.Entry> T getEntry(Register register, String key) {
+    return (T) register.byClass.get(filou.entries.Entry.class).get(key);
   }
 
-  public static <T extends filou.util.Entry> T getEntry(Register register, String key, T defaultValue) {
-    return (T) register.byClass.get(filou.util.Entry.class).get(key, defaultValue);
+  public static <T extends filou.entries.Entry> T getEntry(Register register, String key, T defaultValue) {
+    return (T) register.byClass.get(filou.entries.Entry.class).get(key, defaultValue);
   }
 
   public static Stream<filou.media.Entry<Entry>> entryStream(Register register) {
-    return register.stream(filou.util.Entry.class);
+    return register.stream(filou.entries.Entry.class);
   }
 
   public static void forEachEntry(Register register, Consumer<filou.media.Entry<Entry>> consumer) {
-    register.byClass.get(filou.util.Entry.class).stream().forEach(consumer);
+    register.byClass.get(filou.entries.Entry.class).stream().forEach(consumer);
   }
 
   public static Stream<filou.media.Entry<Entry>> stream(Register register, Descriptor descriptor) {
@@ -173,12 +173,12 @@ public final class REG {
   }
 
   public static Stream<filou.media.Entry<ArrayEntry>> streamArray(Register register, Descriptor descriptor) {
-    return stream(register, descriptor.checkType(filou.util.Type.Array))
+    return stream(register, descriptor.checkType(filou.entries.Type.Array))
             .map((filou.media.Entry<Entry> entry) -> (filou.media.Entry) entry);
   }
 
   public static Stream<filou.media.Entry<StructEntry>> streamStruct(Register register, Descriptor descriptor) {
-    return stream(register, descriptor.checkType(filou.util.Type.Struct))
+    return stream(register, descriptor.checkType(filou.entries.Type.Struct))
             .map((filou.media.Entry<Entry> entry) -> (filou.media.Entry) entry);
   }
 

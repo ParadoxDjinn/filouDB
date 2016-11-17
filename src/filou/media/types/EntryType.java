@@ -2,8 +2,8 @@ package filou.media.types;
 
 import filou.media.Register;
 import filou.media.Type;
-import filou.util.Descriptor;
-import filou.util.Entry;
+import filou.entries.Descriptor;
+import filou.entries.Entry;
 import java.io.*;
 
 /**

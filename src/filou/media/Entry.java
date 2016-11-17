@@ -5,6 +5,7 @@
  */
 package filou.media;
 
+import filou.util.ValueChangeEvent;
 import filou.observe.ChangeListener;
 import filou.observe.ChangeEvent;
 import filou.observe.ChangeSupport;
