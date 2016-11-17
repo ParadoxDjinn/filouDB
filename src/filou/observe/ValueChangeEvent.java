@@ -1,7 +1,4 @@
-package filou.util;
-
-import filou.observe.ChangeEvent;
-import filou.observe.Observable;
+package filou.observe;
 
 /**
  *
