@@ -1,6 +1,6 @@
 package filou.entries;
 
-import filou.util.ValueChangeEvent;
+import filou.observe.ValueChangeEvent;
 import filou.media.Register;
 
 /**

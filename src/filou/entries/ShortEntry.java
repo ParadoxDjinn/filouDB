@@ -1,9 +1,6 @@
 package filou.entries;
 
-import filou.util.ValueChangeEvent;
-import filou.observe.ChangeListener;
-import filou.observe.ChangeEvent;
-import filou.observe.ChangeSupport;
+import filou.observe.*;
 import filou.media.Register;
 import java.io.DataInput;
 import java.io.DataOutput;
