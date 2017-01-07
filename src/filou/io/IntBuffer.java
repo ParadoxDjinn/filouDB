@@ -245,4 +245,13 @@ public class IntBuffer {
     }
   }
 
+  public void addString(String str) {
+    str.chars().forEach(this::add);
+  }
+
+  @Override
+  public String toString() {
+    return new String(buffer, 0, size);
+  }
+
 }
